@@ -7,15 +7,6 @@ apt-get upgrade -y
 # Install required packages
 apt-get install -y exa curl isc-dhcp-server bind9 bind9-doc ufw fail2ban clamav bmon apache2 squid3 iftop ntop vsftpd samba nfs-kernel-server
 
-# Copy Fish shell configuration
-mkdir -p /root/.config/fish
-cp config.fish /root/.config/fish/config.fish
-
-# Change the default shell for root user to Fish
-chsh -s /usr/bin/fish root
-
-# Install Starship prompt
-curl -fsSL https://starship.rs/install.sh | bash
 
 # Create user groups
 groupadd zaakvoerder
