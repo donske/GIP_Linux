@@ -7,6 +7,10 @@ apt-get upgrade -y
 # Install required packages
 apt-get install -y exa curl isc-dhcp-server bind9 bind9-doc ufw fail2ban clamav bmon apache2 squid3 iftop ntop vsftpd samba nfs-kernel-server
 
+# Solution to the "mkpasswd" command not found error
+apt-get install -y whois
+
+# Continue with the rest of the script
 
 # Create user groups
 groupadd zaakvoerder
@@ -39,6 +43,8 @@ done
 create_user "tinevdv" "Tine Van de Velde" "klantenrelaties"
 create_user "jorisq" "Joris Quataert" "administratie"
 create_user "kimdw" "Kim De Waele" "IT_medewerker"
+
+# Continue with the rest of the script...
 
 # Configure network interfaces
 interfaces_file="/etc/network/interfaces"
@@ -105,21 +111,23 @@ echo "$dhcpd_server_content" > "$dhcpd_server_file"
 # Enable ClamAV just-in-time scanning
 setsebool -P clamd_use_jit 1
 
+# Solution to the "clamav-freshclam.conf" file not found error
+touch /etc/clamav/freshclam.conf
+
 # Comment out the Example line in freshclam.conf
 sed -i -e "s/^Example/#Example/" /etc/clamav/freshclam.conf
 
 # Enable ClamAV and auditd services
 systemctl enable clamav auditd
 
+# Solution to the "squid.service" and "ufw" command not found errors
+apt-get install -y squid ufw
+
 # Configure Apache web server for individual user webpages
 sed -i 's/\/var\/www\/html/\/home/' /etc/apache2/sites-available/000-default.conf
 sed -i 's/#ServerName www.example.com/ServerName GR5-Jarno-Alexi/' /etc/apache2/sites-available/000-default.conf
 a2enmod userdir
 systemctl restart apache2
-
-# Enable and start Squid proxy server
-systemctl enable squid
-systemctl start squid
 
 # Configure UFW (Uncomplicated Firewall)
 ufw --force enable
@@ -143,3 +151,4 @@ sed -i 's/#chroot_local_user=YES/chroot_local_user=YES/' /etc/vsftpd.conf
 systemctl restart isc-dhcp-server bind9 apache2 clamav-freshclam squid vsftpd smbd nfs-kernel-server
 
 echo "Script execution completed."
+
